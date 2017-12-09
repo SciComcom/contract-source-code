@@ -1,5 +1,6 @@
-
-library SafeMath {
+``` 
+library SafeMath { 
+  
     function mul(uint256 a, uint256 b) internal constant returns(uint256) {
         uint256 c = a * b;
         assert(a == 0 || c / a == b);
@@ -22,7 +23,9 @@ library SafeMath {
         return c;
     }
 }
+```
  
+``` 
 contract Ownable {
     address public owner;
 
@@ -40,7 +43,9 @@ contract Ownable {
         owner = newOwner;
     }
 }
- 
+```
+  
+``` 
 contract Pausable is Ownable {
     bool public paused = false;
 
@@ -60,7 +65,9 @@ contract Pausable is Ownable {
         Unpause();
     }
 }
- 
+```
+  
+``` 
 contract ERC20 {
     uint256 public totalSupply;
  
@@ -73,7 +80,9 @@ contract ERC20 {
     function allowance(address owner, address spender) constant returns (uint256);
     function approve(address spender, uint256 value) returns (bool);
 }
- 
+```
+  
+```
 contract StandardToken is ERC20 {
     using SafeMath for uint256;
  
@@ -145,7 +154,9 @@ contract StandardToken is ERC20 {
         return true;
     }
 }
+```
  
+``` 
 contract BurnableToken is StandardToken {
     event Burn(address indexed burner, uint256 value);
  
@@ -160,19 +171,23 @@ contract BurnableToken is StandardToken {
         Burn(burner, _value);
     }
 }
-
-contract MintableToken is StandardToken, Ownable {
+```
+ 
+```
+contract MintableToken is StandardToken, Ownable { 
+    
     event Mint(address indexed to, uint256 amount);
     event MintFinished();
- 
+    
     bool public mintingFinished = false;
     uint public MAX_SUPPLY;
- 
+    
     modifier canMint() { require(!mintingFinished); _; }
- 
+    
     function mint(address _to, uint256 _amount) onlyOwner canMint public returns(bool success) {
+        
         require(totalSupply.add(_amount) <= MAX_SUPPLY);
- 
+        
         totalSupply = totalSupply.add(_amount);
         balances[_to] = balances[_to].add(_amount);
  
@@ -190,6 +205,7 @@ contract MintableToken is StandardToken, Ownable {
         return true;
     }
 }
+```
  
 /*
     ICO S Token
@@ -204,7 +220,8 @@ contract MintableToken is StandardToken, Ownable {
     - Закрытие Crowdsale происходит с помощью функции `withdraw()`: управление токеном передаётся бенефициару
     - После завершения ICO и PreICO владелец должен вызвать `finishMinting()` у токена чтобы закрыть выпуск токенов
 */
- 
+  
+``` 
 contract Token is BurnableToken, MintableToken {
     string public name = "S Token";
     string public symbol = "SKK";
@@ -215,7 +232,9 @@ contract Token is BurnableToken, MintableToken {
         mint(0x17D0b1A81f186bfA186b5841F21FC3207Be2Af7C, 42800000 * 1 ether);       // Command mint
     }
 }
- 
+```
+  
+``` 
 contract Crowdsale is Pausable {
     using SafeMath for uint;
          
@@ -244,6 +263,7 @@ contract Crowdsale is Pausable {
     }
         
     function purchase() whenNotPaused payable {
+        
         require(!crowdsaleFinished);
         require(now >= startTime && now < endTime);
         require(tokensSold < tokensForSale);
@@ -278,7 +298,7 @@ contract Crowdsale is Pausable {
         
         NewContribution(msg.sender, amount, sum);
     }
-     
+          
     function withdraw() onlyOwner {
         require(!crowdsaleFinished);
          
@@ -288,3 +308,4 @@ contract Crowdsale is Pausable {
         Withdraw();
     }
 }
+```
